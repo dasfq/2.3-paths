@@ -37,5 +37,4 @@ def get_shop_list_by_dishes():
             print('Таких блюд нет в книге рецептов')
     print(ingredients_dict)
 
-
 get_shop_list_by_dishes()
