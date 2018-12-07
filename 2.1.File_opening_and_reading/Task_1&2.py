@@ -20,7 +20,8 @@ def Make_cook_book():
     return(cook_book)
 
 
-def get_shop_list_by_dishes(book):
+def get_shop_list_by_dishes():
+    book = Make_cook_book()
     ingredients_dict = {}
     dishes_list = list(input('Введите названия блюд через запятую без пробелов: \n').split(','))
     print(dishes_list)
@@ -36,5 +37,5 @@ def get_shop_list_by_dishes(book):
             print('Таких блюд нет в книге рецептов')
     print(ingredients_dict)
 
-book = Make_cook_book()
-get_shop_list_by_dishes(book)
+
+get_shop_list_by_dishes()
