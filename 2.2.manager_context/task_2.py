@@ -8,7 +8,7 @@ class Timer():
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.stop = time.time()
         self.interval = self.stop - self.start
-        print(f'Старт: {self.start}, Остановка: {self.stop}, Порачено времени: {self.interval}')
+        print(f'Старт: {time.ctime(self.start)}, Остановка: {time.ctime(self.stop)}, Порачено времени: {self.interval}')
         return False
 
 
