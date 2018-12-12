@@ -1,9 +1,6 @@
 import time
 
 class Timer():
-    def __init__(self):
-        pass
-
     def __enter__(self):
         self.start = time.time()
 
@@ -13,7 +10,7 @@ class Timer():
         print(f'Старт: {self.start}, Остановка: {self.stop}, Порачено времени: {self.interval}')
         return False
 
-with Timer as t:
+with Timer() as t:
     for i in range(10):
         i = i*i
         print(i)
