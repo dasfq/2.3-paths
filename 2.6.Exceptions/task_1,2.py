@@ -9,9 +9,12 @@ def calc():
     # print(data_list)
     for i in data_list:
         try:
-            assert i >= 0, "Введите положительные числа"
+            assert i >= 0
         except TypeError:
             pass
+        except AssertionError:
+            print("Введите положительные числа")
+            raise SystemExit
     try:
         if data_list[0] == "+":
             result = data_list[1] + data_list[2]
@@ -25,6 +28,8 @@ def calc():
         elif data_list[0] == "/":
             result = data_list[1] / data_list[2]
             print(result)
+        else:
+            print("Введите корректный знак арифметической операции")
     except TypeError:
         print('Введите корректные данные')
         raise SystemExit
