@@ -12,17 +12,21 @@ def calc():
             assert i >= 0, "Введите положительные числа"
         except TypeError:
             pass
-    if data_list[0] == "+":
-        result = data_list[1] + data_list[2]
-        print(result)
-    elif data_list[0] == "-":
-        result = data_list[1] - data_list[2]
-        print(result)
-    elif data_list[0] == "*":
-        result = data_list[1] * data_list[2]
-        print(result)
-    elif data_list[0] == "/":
-        result = data_list[1] / data_list[2]
-        print(result)
+    try:
+        if data_list[0] == "+":
+            result = data_list[1] + data_list[2]
+            print(result)
+        elif data_list[0] == "-":
+            result = data_list[1] - data_list[2]
+            print(result)
+        elif data_list[0] == "*":
+            result = data_list[1] * data_list[2]
+            print(result)
+        elif data_list[0] == "/":
+            result = data_list[1] / data_list[2]
+            print(result)
+    except TypeError:
+        print('Введите корректные данные')
+        raise SystemExit
 
 calc()
