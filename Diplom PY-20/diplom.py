@@ -3,7 +3,7 @@ import requests, pprint, json, time
 class User:
     def __init__(self, token):
         self.token = token
-
+    # делаем ссылку для подтверждения прав доступа к нужным данным
     def get_link(app_id):
         app_id = 6788744
         auth_url = 'https://oauth.vk.com/authorize?'
@@ -18,10 +18,11 @@ class User:
         print('Линк для получения прав:\n', r.url )
         return r
 
+    #делаем метод, который будет передавать запрос
     def send_request(self):
         r = requests.get(self.request_url + self.method, self.auth_data).json()
         return r
-
+    # метод, в котором сначала формируем словарь группа:кол-ва участников, потом удаляем из неё группы, в которых есть друзья
     def get_groups(self):
     # returns json file with list of groups without any user's friends
 
@@ -78,21 +79,10 @@ class User:
                     #
                     r = self.send_request()
 
+user1 = User(token = '6ec12f01485eaed78e2cdcf91d696e6531b7acb3976177e3132bb72fa469367a46333c59d4dd3d760cbde')
+print(user1.get_groups())
 
 
-
-
-#         auth_data = {
-#             'user_id': 171691064,
-#             'extended': 1,
-#             'fields': 'members_count',
-#             'access_token': token,
-#             'v': '5.52'
-#         }
-#         r = requests.get
-#
-# ?group_id=.....&extended=1&user_ids=1,2,3
-#
 # [
 #     {
 #     “name”: “Название группы”,
@@ -103,5 +93,3 @@ class User:
 #     …
 #     }
 # ]
-user1 = User(token = '6ec12f01485eaed78e2cdcf91d696e6531b7acb3976177e3132bb72fa469367a46333c59d4dd3d760cbde')
-print(user1.get_groups())
