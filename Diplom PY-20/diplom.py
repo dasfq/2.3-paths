@@ -91,6 +91,6 @@ class User:
             f.write(json.dumps(groups_dict))
         return groups_dict
 
-if name == ‘main’:
+if __name__ == '__main__':
     user1 = User(token = '2ac36695da521d2f3b8498bfe806a24735a1d7ce19f1b2d19ff35ccc2ece3e4836ea8ab7ad5a1a8e8577f')
     print('Список отобранных групп:\n',user1.get_groups())
