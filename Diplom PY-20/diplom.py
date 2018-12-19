@@ -38,11 +38,11 @@ class User:
 
     #делаем метод, который будет передавать запрос
     def send_request(self):
-        try:
-            r = requests.get(self.request_url + self.method, self.auth_data).json()
-            print('.')
-        except KeyError as er:
-            print(er)
+        # try:
+        r = requests.get(self.request_url + self.method, self.auth_data).json()
+        print('.')
+        # except KeyError as er:
+        #     print(er)
         return r
 
     def get_groups(self):
