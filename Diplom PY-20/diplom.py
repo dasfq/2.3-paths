@@ -21,6 +21,7 @@ if name == ‘main’:
             self.app_id = 6788744
             self.auth_url = 'https://oauth.vk.com/authorize?'
             self.auth_data = {}
+            self.method = ''
 
 
         # делаем ссылку для подтверждения прав доступа к нужным данным
