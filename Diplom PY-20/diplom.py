@@ -47,7 +47,7 @@ class User:
             'v':'5.92'
         }
         r = self.send_request()
-        groups_dict = {i['id']: i['members_count'] for i in r['response']['items']}
+        groups_dict = {i['id']:{'name': i['name'], 'members': i['members_count']} for i in r['response']['items']}
         print('Список всех групп:',groups_dict)
 
         # get a list of user's friends:
@@ -63,29 +63,37 @@ class User:
         # will delete groups with user's friends from the groups_list
         for group_id, members_count in groups_dict.copy().items():
             temp_list = friends_list.copy()
+            friends_str = ''
             while len(temp_list) > 0:
                 friends_list_500 = [temp_list.pop() for i in temp_list[:500] if len(temp_list)>0]
-                # print('list of 500 friends:\n', friends_list_500)
+                for i in friends_list_500:
+                    friends_str = friends_str + str(i) + ','
                 self.auth_data = {
                     'group_id': group_id,
-                    'user_ids': friends_list_500,
+                    'user_ids': friends_str,
                     'access_token': self.token,
                     'extended': '1',
-                    'v': '5.52'
+                    'v': '5.92'
                 }
                 self.method = 'groups.isMember'
                 r = self.send_request()
-                time.sleep(0.2)
-                print('r равно:',r)
+                time.sleep(0.1)
 
                 # Удаляем id группы из словаря, если находим друга в группе
                 for member_data in r['response']:
-                    if member_data['member'] = 1:
+                    if member_data['member'] == 1:
                         groups_dict.pop(group_id)
                         break
+        print(groups_dict)
+
+        with open('groups.json', 'w') as f:
+            f.write(json.dumps(groups_dict))
+
+
 
 user1 = User(token = '2ac36695da521d2f3b8498bfe806a24735a1d7ce19f1b2d19ff35ccc2ece3e4836ea8ab7ad5a1a8e8577f')
 print(user1.get_groups())
+
 
 
 # [
