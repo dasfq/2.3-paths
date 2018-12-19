@@ -77,9 +77,12 @@ class User:
                 r = self.send_request()
                 time.sleep(0.2)
                 print('r равно:',r)
-            # if r['response'] == 1:
-            #     groups_dict.pop(group_id)
-            #     break
+
+                # Удаляем id группы из словаря, если находим друга в группе
+                for member_data in r['response']:
+                    if member_data['member'] = 1:
+                        groups_dict.pop(group_id)
+                        break
 
 user1 = User(token = '2ac36695da521d2f3b8498bfe806a24735a1d7ce19f1b2d19ff35ccc2ece3e4836ea8ab7ad5a1a8e8577f')
 print(user1.get_groups())
