@@ -9,7 +9,7 @@
 # 6. Выводим словарь оставшихся групп.
 
 
-import requests, pprint, json, time
+import requests, json, time
 
 class User:
     def __init__(self, token):
@@ -19,6 +19,8 @@ class User:
         self.request_url = 'https://api.vk.com/method/'
         self.auth_data = {}
         self.method = ''
+        self.user_id = 171691064
+        self.version = '5.92'
 
 
     # делаем ссылку для подтверждения прав доступа к нужным данным
@@ -28,7 +30,7 @@ class User:
             'display':'page',
             'scope':'friends,groups',
             'response_type':'token',
-            'v':'5.92'
+            'v': self.version
         }
         r = requests.get(self.auth_url, self.auth_data)
         print('Линк для получения прав:\n', r.url )
@@ -36,39 +38,49 @@ class User:
 
     #делаем метод, который будет передавать запрос
     def send_request(self):
-        r = requests.get(self.request_url + self.method, self.auth_data).json()
+        try:
+            r = requests.get(self.request_url + self.method, self.auth_data).json()
+            print('.')
+        except KeyError as er:
+            print(er)
         return r
 
     def get_groups(self):
         # get a dict of ALL user's groups:
         self.method = 'groups.get'
         self.auth_data = {
-            'user_id':171691064,
+            'user_id': self.user_id,
             'extended':1,
             'fields':'members_count',
             'access_token': self.token,
-            'v':'5.92'
+            'v': self.version
         }
         r = self.send_request()
+        # print(r)
+
+        # Нужно удалить из списка групп записи о деактивированных группах, чтобы дальше не было исключения KeyError
+        for a in r['response']['items']:
+            if 'deactivated' in a.keys():
+                r['response']['items'].remove(a)
+
         groups_dict = {i['id']:{'name': i['name'], 'members': i['members_count']} for i in r['response']['items']}
-        print('Список всех групп:',groups_dict)
 
         # get a list of user's friends:
         self.method = 'friends.get'
         self.auth_data = {
-            'user_id': 171691064,
+            'user_id': self.user_id,
             'access_token': self.token,
-            'v': '5.92'
+            'v': self.version
         }
         r = self.send_request()
         friends_list = [i for i in r['response']['items']]
 
         # will delete groups with user's friends from the groups_list
-        for group_id, members_count in groups_dict.copy().items():
+        for group_id, group_data in groups_dict.copy().items():
             temp_list = friends_list.copy()
             friends_str = ''
             while len(temp_list) > 0:
-                friends_list_500 = [temp_list.pop() for i in temp_list[:500] if len(temp_list)>0]
+                friends_list_500 = [temp_list.pop() for i in temp_list[:100] if len(temp_list)>0]
                 for i in friends_list_500:
                     friends_str = friends_str + str(i) + ','
                 self.auth_data = {
@@ -76,17 +88,18 @@ class User:
                     'user_ids': friends_str,
                     'access_token': self.token,
                     'extended': '1',
-                    'v': '5.92'
+                    'v': self.version
                 }
                 self.method = 'groups.isMember'
                 r = self.send_request()
-                time.sleep(0.1)
+                # time.sleep(0.1)
 
                 # Удаляем id группы из словаря, если находим друга в группе
                 for member_data in r['response']:
                     if member_data['member'] == 1:
                         groups_dict.pop(group_id)
                         break
+                break
         with open('groups.json', 'w') as f:
             f.write(json.dumps(groups_dict))
         return groups_dict
