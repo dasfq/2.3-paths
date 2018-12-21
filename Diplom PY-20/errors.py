@@ -1,2 +1,3 @@
-{'error': {'error_code': 5, 'error_msg': 'User authorization failed: access_token was given to another ip address.',
+6 Слишком много запросов в секунду.
 
+{'error': {'error_code': 5, 'error_msg': 'User authorization failed: access_token was given to another ip address.', 'request_params': [{'key': 'oauth', 'value': '1'}, {'key': 'method', 'value': 'groups.get'}, {'key': 'user_id', 'value': '171691064'}, {'key': 'extended', 'value': '1'}, {'key': 'fields', 'value': 'members_count'}, {'key': 'v', 'value': '5.92'}]}}

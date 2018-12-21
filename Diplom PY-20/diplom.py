@@ -1,15 +1,5 @@
-# 1. Найти словарь всех групп ЮЗЕРА (id: кол-во участников)
-# 2. Найти список всех друзей Юзера
-# 3.
-# 3.1. Берём первую группу.
-# 3.2. Берём первых 500 друзей, проверяем методом group.isMember есть ли среди этих друзей состоящие в данной группе.
-# 3.3. Берём вторых и третьх 500 друзей, пока не закончатся друзья, и проверяем с тем же id группы.
-# 4. Если находим хоть одного друга в группе, то удаляем этот id группы из словаря.
-# 5. Перебираем остальные группы аналогично.
-# 6. Выводим словарь оставшихся групп.
-
-
 import requests, json, time
+
 
 class User:
     def __init__(self, token):
@@ -22,9 +12,10 @@ class User:
         self.user_id = 171691064
         self.version = '5.92'
 
-
-    # делаем ссылку для подтверждения прав доступа к нужным данным
     def get_link(self, app_id):
+    """
+    делаем ссылку для подтверждения прав доступа к нужным данным
+    """
         self.auth_data = {
             'client_id':app_id,
             'display':'page',
@@ -36,17 +27,29 @@ class User:
         print('Линк для получения прав:\n', r.url )
         return
 
-    #делаем метод, который будет передавать запрос
+
     def send_request(self):
-        # try:
+        """
+       делаем метод, который будет передавать запросы и проверять пришёл ли ответ без ошибок
+        """
         r = requests.get(self.request_url + self.method, self.auth_data).json()
+        if 'error' in r.keys():
+            if r['error']['error_code'] == 6:
+                time.sleep(0.2)
+                send_request()
+            assert not r['error'], r['error']['error_msg']
         print('.')
-        # except KeyError as er:
-        #     print(er)
         return r
 
     def get_groups(self):
-        # get a dict of ALL user's groups:
+        """
+        Составляем список отобранных групп:
+            1. Найти словарь всех групп ЮЗЕРА.
+            Нужно удалить из списка групп записи о деактивированных группах, чтобы дальше не было исключения KeyError.
+            2. Найти список всех друзей Юзера.
+            3. Проверяем по 100 друзей разом, входят ли они в группу пользователя. Перебираем всех друзей и все группы.
+            4. Выводим словарь оставшихся групп.
+        """
         self.method = 'groups.get'
         self.auth_data = {
             'user_id': self.user_id,
@@ -56,15 +59,10 @@ class User:
             'v': self.version
         }
         r = self.send_request()
-        # print(r)
-
-        # Нужно удалить из списка групп записи о деактивированных группах, чтобы дальше не было исключения KeyError
         for a in r['response']['items']:
             if 'deactivated' in a.keys():
                 r['response']['items'].remove(a)
-
         groups_dict = {i['id']:{'name': i['name'], 'members': i['members_count']} for i in r['response']['items']}
-
         # get a list of user's friends:
         self.method = 'friends.get'
         self.auth_data = {
@@ -74,8 +72,6 @@ class User:
         }
         r = self.send_request()
         friends_list = [i for i in r['response']['items']]
-
-        # will delete groups with user's friends from the groups_list
         for group_id, group_data in groups_dict.copy().items():
             temp_list = friends_list.copy()
             friends_str = ''
@@ -92,9 +88,6 @@ class User:
                 }
                 self.method = 'groups.isMember'
                 r = self.send_request()
-                # time.sleep(0.1)
-
-                # Удаляем id группы из словаря, если находим друга в группе
                 for member_data in r['response']:
                     if member_data['member'] == 1:
                         groups_dict.pop(group_id)
@@ -104,6 +97,7 @@ class User:
             f.write(json.dumps(groups_dict))
         return groups_dict
 
+
 if __name__ == '__main__':
-    user1 = User(token = '2ac36695da521d2f3b8498bfe806a24735a1d7ce19f1b2d19ff35ccc2ece3e4836ea8ab7ad5a1a8e8577f')
+    user1 = User(token = 'ed1271af9e8883f7a7c2cefbfddfcbc61563029666c487b2f71a5227cce0d1b533c4af4c5b888633c06ae')
     print('Список отобранных групп:\n',user1.get_groups())
