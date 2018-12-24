@@ -15,9 +15,9 @@ class User:
         self.version = '5.92'
 
     def get_link(self, app_id):
-        #    """
-        #    делаем ссылку для подтверждения прав доступа к нужным данным
-        #    """
+        """
+        делаем ссылку для подтверждения прав доступа к нужным данным
+        """
         self.auth_data = {
             'client_id': app_id,
             'display': 'page',
@@ -30,27 +30,29 @@ class User:
         return
 
     def send_request(self):
-        #  """
-        # делаем метод, который будет передавать запросы и проверять пришёл ли ответ без ошибок
-        #  """
+        """
+        делаем метод, который будет передавать запросы и проверять пришёл ли ответ без ошибок
+        """
         r = requests.get(self.request_url + self.method, self.auth_data).json()
         if 'error' in r.keys():
             if r['error']['error_code'] == 6:
                 time.sleep(0.2)
-                send_request()
-            assert not r['error'], r['error']['error_msg']
+                self.send_request()
+            else:
+                print(r['error']['error_msg'])
+                raise SystemExit
         print('.')
         return r
 
     def get_groups(self):
-        # """
-        # Составляем список отобранных групп:
-        #     1. Найти словарь всех групп ЮЗЕРА.
-        #     Нужно удалить из списка групп записи о деактивированных группах, чтобы дальше не было исключения KeyError.
-        #     2. Найти список всех друзей Юзера.
-        #     3. Проверяем по 100 друзей разом, входят ли они в группу пользователя. Перебираем всех друзей и все группы.
-        #     4. Выводим словарь оставшихся групп.
-        # """
+        """
+        Составляем список отобранных групп:
+            1. Найти словарь всех групп ЮЗЕРА.
+            Нужно удалить из списка групп записи о деактивированных группах, чтобы дальше не было исключения KeyError.
+            2. Найти список всех друзей Юзера.
+            3. Проверяем по 100 друзей разом, входят ли они в группу пользователя. Перебираем всех друзей и все группы.
+            4. Выводим словарь оставшихся групп.
+        """
         self.method = 'groups.get'
         self.auth_data = {
             'user_id': self.user_id,
@@ -64,7 +66,9 @@ class User:
             if 'deactivated' in a.keys():
                 r['response']['items'].remove(a)
         groups_dict = {i['id']: {'name': i['name'], 'members': i['members_count']} for i in r['response']['items']}
-        # get a list of user's friends:
+        """
+        get a list of user's friends:
+        """
         self.method = 'friends.get'
         self.auth_data = {
             'user_id': self.user_id,
