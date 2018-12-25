@@ -42,6 +42,7 @@ class User:
                 print(r['error']['error_msg'])
                 raise SystemExit
         print('.')
+        print(r)
         return r
 
     def get_groups(self):
@@ -81,8 +82,8 @@ class User:
             temp_list = friends_list.copy()
             friends_str = ''
             while len(temp_list) > 0:
-                friends_list_500 = [temp_list.pop() for i in temp_list[:100] if len(temp_list) > 0]
-                for i in friends_list_500:
+                friends_list_100 = [temp_list.pop() for i in temp_list[:100] if len(temp_list) > 0]
+                for i in friends_list_100:
                     friends_str = friends_str + str(i) + ','
                 self.auth_data = {
                     'group_id': group_id,
