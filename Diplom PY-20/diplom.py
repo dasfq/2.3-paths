@@ -34,15 +34,16 @@ class User:
         делаем метод, который будет передавать запросы и проверять пришёл ли ответ без ошибок
         """
         r = requests.get(self.request_url + self.method, self.auth_data).json()
+        time.sleep(0.4)
         if 'error' in r.keys():
             if r['error']['error_code'] == 6:
-                time.sleep(0.2)
+                print(r['error']['error_msg'])
+                time.sleep(0.4)
                 self.send_request()
             else:
                 print(r['error']['error_msg'])
                 raise SystemExit
         print('.')
-        print(r)
         return r
 
     def get_groups(self):
